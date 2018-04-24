@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Airports in the United States (2009)</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"/>
     <link rel="stylesheet" href="css/main.css" />
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'/>
+    <script src="https://unpkg.com/rbush@2.0.1/rbush.min.js"></script>
+    <script src="https://unpkg.com/labelgun@6.0.0/lib/labelgun.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.4.4/proj4.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4leaflet/1.0.2/proj4leaflet.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/1.3.4/chroma.min.js"></script>
-    <script src="https://unpkg.com/rbush@2.0.1/rbush.min.js"></script>
-    <script src="https://unpkg.com/labelgun@6.0.0/lib/labelgun.min.js"></script>
     <script src="https://unpkg.com/esri-leaflet@2.1.1/dist/esri-leaflet.js"></script>
     <script type="text/javascript" src="https://cloudybay.github.io/leaflet.latlng-graticule/leaflet.latlng-graticule.js"></script>
 </head>
@@ -25,6 +25,15 @@
     <p> Spring 2018 | GEOG 572 | Geovisual Analtyics &copy; Hannah Friedrich, CEOAS, OSU</p>
 </div>
 <script>
+
+    // 14. This is core of how Labelgun works. We must provide two functions, one
+    // that hides our labels, another that shows the labels. These are essentially
+    // callbacks that labelgun uses to actually show and hide our labels
+    // In this instance we set the labels opacity to 0 and 1 respectively.
+    var hideLabel = function(label){ label.labelObject.style.opacity = 0;};
+    var showLabel = function(label){ label.labelObject.style.opacity = 1;};
+    var labelEngine = new labelgun.default(hideLabel, showLabel);
+    var labels = [];
 
     var mbAttr = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
         '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
@@ -45,9 +54,9 @@
     );
 
     var mymap = L.map('map', {
-        crs: mycrs, // 19. assign the custom crs to the crs option. change the zoom levels due to the change of projection.
+        //crs: mycrs, // 19. assign the custom crs to the crs option. change the zoom levels due to the change of projection.
         center: [39.606248, -96.417631],
-        zoom: 4,
+        zoom: 2
         //layers: [grayscale]
     });
 
@@ -61,7 +70,7 @@
 
     var airports = L.geoJson.ajax("assets/airports.geojson", {
         onEachFeature: function (feature, layer) {
-            layer.bindPopup(feature.properties.CNTL_TWR);
+            layer.bindPopup(feature.properties.AIRPT_NAME);
         },
 
         pointToLayer: function (feature, latlng) {
@@ -96,15 +105,13 @@
     function style(feature) {
         return {
             fillColor: setColor(feature.properties.count),
-            fillOpacity: 0.8,
+            fillOpacity: 0.7,
             weight: 1,
             opacity: 1,
             color: '#ffffff',
         };
     }
 
-    // 3.1 declare an empty/null geojson object
-    var geojson = null;
 
     // 3.2 interactive features.
     // 3.2.1 highlight a feature when the mouse hovers on it.
@@ -131,7 +138,7 @@
 
     // 3.2.3 reset the hightlighted feature when the mouse is out of its region.
     function resetHighlight(e) {
-        geojson.resetStyle(e.target);
+        states.resetStyle(e.target);
         $(".update").html("Hover over a state");
     }
 
@@ -142,13 +149,10 @@
             click: zoomToFeature,
             mouseout: resetHighlight
         });
+        label.bindTooltip(feature.properties.NAME, {className: 'feature-label', permanent:true, direction: 'center'});
+        labels.push(label);
     }
 
-    // Add Neighborhood Polygons
-    geojson = L.geoJson.ajax("assets/us-states.geojson", {
-        style: style,
-        onEachFeature: onEachFeature
-    }).addTo(mymap);
 
 
     // Create Leaflet Control Object for Legend
@@ -176,38 +180,18 @@
 
 
     // Add a scale bar to map
-    L.control.scale({position: 'bottomleft'}).addTo(mymap);
+    //L.control.scale({position: 'bottomleft'}).addTo(mymap);
 
-    // 13. Add a latlng graticules.
-    L.latlngGraticule({
-        showLabel: true,
-        opacity: 0.2,
-        color: "#747474",
-        zoomInterval: [
-            {start: 2, end: 7, interval: 2},
-            {start: 8, end: 11, interval: 0.5}
-        ]
-    }).addTo(mymap);
 
-    // 14. This is core of how Labelgun works. We must provide two functions, one
-    // that hides our labels, another that shows the labels. These are essentially
-    // callbacks that labelgun uses to actually show and hide our labels
-    // In this instance we set the labels opacity to 0 and 1 respectively.
-    var hideLabel = function(label){ label.labelObject.style.opacity = 0;};
-    var showLabel = function(label){ label.labelObject.style.opacity = 1;};
-    var labelEngine = new labelgun.default(hideLabel, showLabel);
-    var labels = [];
 
-    // 15. Create a label for each county.
-    var counties = null;
-    counties = L.geoJson.ajax("assets/counties.geojson", {
+
+    var states = null;
+    // Add Neighborhood Polygons
+    states = L.geoJson.ajax("assets/us-states.geojson", {
         style: style,
-        onEachFeature: function (feature, label) {
-            label.bindTooltip(feature.properties.NAME, {className: 'feature-label', permanent:true, direction: 'center'});
-            labels.push(label);
-        }
-    }).addTo(mymap);
+        onEachFeature: onEachFeature
 
+    }).addTo(mymap);
 
     function addLabel(layer, id) {
         // This is ugly but there is no getContainer method on the tooltip :(
@@ -244,13 +228,25 @@
 
     }
 
+
     mymap.on("zoomend", function(){
         var i = 0;
-        counties.eachLayer(function(label){
+        states.eachLayer(function(label){
             addLabel(label, ++i);
         });
         labelEngine.update();
     });
+
+    // 13. Add a latlng graticules.
+//    L.latlngGraticule({
+//        showLabel: true,
+//        opacity: 0.6,
+//        color: "#747474",
+//        zoomInterval: [
+//            {start: 0, end: 7, interval: 2},
+//            {start: 8, end: 11, interval: 0.5}
+//        ]
+//    }).addTo(mymap);
 
 </script>
 </body>
