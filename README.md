@@ -7,10 +7,10 @@ towers - symbolized differently by the color of the telegram icon. By hovering o
 of the map updates with the state and the number of airports in that state. If you click on a state, the map will be zoom
 to that state.
 
-## Projeciton
+## Projection
 I decided to use the USA Contiguous Albers Equal Area Conic projection (EPSG:102003) because the United States is predominately
-oriented East-West as opposed to North-South. While conic projections do not retain share or scale correctly, distortion is
-minimized  between standard parallels.
+oriented East-West as opposed to North-South and conic projections handle "wide" geogrpahic spans well. While conic projections do not
+retain shape or scale exactly, distortion is minimized  between standard parallels.
 
 ## Major Functions
 
@@ -30,7 +30,7 @@ Reset the hightlighted feature when the mouse is out of its region.
 Zoom to the highlighted feature when the mouse is clicking onto it.
 
 ## Libraries
-The underlying web map support is from <a href="http://leafletjs.com/">Leaflet js library</a>.
+The underlying web map support is from <a href="http://leafletjs.com/">Leaflet</a> js library.
 
 For making dynamic labels, the <a href="https://github.com/Geovation/labelgun">Label Gun</a> and
 <a href="https://github.com/mourner/rbush">Rbush</a> js libraries are used.
@@ -53,4 +53,4 @@ US States data is from <a href="https://bost.ocks.org/mike/">Mike Bostock</a>.
 Made by <a href="https://github.com/hannahfriedrich">Hannah Friedrich</a>, Masters Student in Geography, Oregon State University
 
 ## Acknowledgement
-This webmap was created for <a href="https://github.com/jakobzhao/geog4572">Geovisual Analytics</a> taught by <a href="http://geoviz.ceoas.oregonstate.edu/">Geovisual Analytics</a>Bo Zhao
+This webmap was created for <a href="https://github.com/jakobzhao/geog4572">Geovisual Analytics</a> taught by <a href="http://geoviz.ceoas.oregonstate.edu/">Bo Zhao</a>.
