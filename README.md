@@ -2,7 +2,7 @@
 Made by Hannah Friedrich
 
 ## Introduction
-This is an interactive map that displays airport density by state and airports that have and do not have airport control
+This is an <a href="https://hannahfriedrich.github.io/AirportControlTower/">interactive map</a> that displays airport density by state and airports that have and do not have airport control
 towers - symbolized differently by the color of the telegram icon. By hovering over a state, the information panel in the top right corner
 of the map updates with the state and the number of airports in that state. If you click on a state, the map will be zoom
 to that state.
