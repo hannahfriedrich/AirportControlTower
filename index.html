@@ -153,7 +153,8 @@
             labels.push(label);
 
 
-        }
+        },
+        attribution: 'Airport Data from <a href="https://catalog.data.gov/dataset/usgs-small-scale-dataset-airports-of-the-united-states-201207-shapefile">US Data Catalog</a> | Made by <a href="https://github.com/hannahfriedrich/AirportControlTower">Hannah Friedrich</a>'
     }).addTo(mymap);
 
     // Create Leaflet Control Object for Legend
@@ -182,11 +183,11 @@
     //13. Add a latlng graticules.
     L.latlngGraticule({
         showLabel: true,
-        opacity: 0.6,
-        color: "#747474",
+        opacity: 0.4,
+        color: "#a0a0a0",
         zoomInterval: [
-            {start: 0, end: 7, interval: 2},
-            {start: 8, end: 11, interval: 0.5}
+            {start: 0, end: 7, interval: 10},
+            {start: 8, end: 11, interval: 1}
         ]
     }).addTo(mymap);
 
